@@ -1,8 +1,9 @@
 // --- GAME STATE ---
 let score = 0;
-let currentLane = 50; // 20 (Left), 50 (Middle), 80 (Right)
+let currentLane = 50; 
 const player = document.getElementById('player');
 const scene = document.getElementById('scene');
+const scoreDisplay = document.getElementById('score');
 
 // --- 1. PLAYER MOVEMENT ---
 document.addEventListener('keydown', (e) => {
@@ -14,24 +15,24 @@ document.addEventListener('keydown', (e) => {
 // --- 2. THE EVOLUTION LOGIC ---
 function collectPoint() {
     score++;
-    document.getElementById('score').innerText = score;
+    scoreDisplay.innerText = score;
 
-    // RULE 1: Weather Check (Multiples of 3: 3, 6, 9...)
+    // RULE 1: Weather Check (Multiples of 3)
     if (score % 3 === 0) {
         document.body.classList.toggle('cold-mode');
         document.getElementById('next-goal').innerText = score + 3;
     }
 
-    // RULE 2: Attractive Gold Check (Multiples of 4: 4, 8, 12...)
+    // RULE 2: Attractive Gold Check (Multiples of 4)
     if (score % 4 === 0) {
         player.innerHTML = "🤰👙"; // Bikini Evolution
         player.classList.add('gold-active');
-        document.documentElement.style.setProperty('--road-speed', '0.6s'); // Speed up!
+        document.documentElement.style.setProperty('--road-speed', '0.6s');
     } else {
         const isCold = document.body.classList.contains('cold-mode');
         player.innerHTML = isCold ? "🤰🧥" : "🤰";
         player.classList.remove('gold-active');
-        document.documentElement.style.setProperty('--road-speed', '2s'); // Normal speed
+        document.documentElement.style.setProperty('--road-speed', '2s');
     }
 }
 
@@ -41,7 +42,6 @@ function spawnGate() {
     gate.className = 'gate';
     gate.innerHTML = "👕"; 
     
-    // Choose a random lane
     const lanes = ["20%", "50%", "80%"];
     gate.style.left = lanes[Math.floor(Math.random() * 3)];
     gate.style.top = "0px";
@@ -51,15 +51,14 @@ function spawnGate() {
     // Move gate down towards player
     let pos = 0;
     const move = setInterval(() => {
-        pos += 8;
+        pos += 10;
         gate.style.top = pos + "px";
         
-        // COLLISION DETECTION (3D Depth)
+        // Collision Detection
         if (pos > 400 && pos < 480) {
             const playerLeft = currentLane;
             const gateLeft = parseInt(gate.style.left);
             
-            // If they are in the same lane
             if (Math.abs(playerLeft - gateLeft) < 10) {
                 collectPoint();
                 gate.remove();
@@ -67,7 +66,6 @@ function spawnGate() {
             }
         }
         
-        // Remove if missed
         if (pos > 600) {
             gate.remove();
             clearInterval(move);
@@ -75,5 +73,5 @@ function spawnGate() {
     }, 50);
 }
 
-// Run the spawner
-setInterval(spawnGate, 1800);
+// Start the game loop
+setInterval(spawnGate, 1500);
