@@ -1,77 +1,61 @@
-// --- GAME STATE ---
+// --- GAME STATE VARIABLES ---
 let score = 0;
-let currentLane = 50; 
-const player = document.getElementById('player');
-const scene = document.getElementById('scene');
-const scoreDisplay = document.getElementById('score');
+let charPos = 50; 
+let isGameOver = false; // Prevents movement after death
+const char = document.getElementById('character');
 
-// --- 1. PLAYER MOVEMENT ---
-document.addEventListener('keydown', (e) => {
-    if (e.key === "ArrowLeft" && currentLane > 20) currentLane -= 30;
-    if (e.key === "ArrowRight" && currentLane < 80) currentLane += 30;
-    player.style.left = currentLane + "%";
-});
+// ... (Keep your existing mouse/keyboard movement code here, 
+// but add `if (isGameOver) return;` at the top of them so you can't move when dead) ...
 
-// --- 2. THE EVOLUTION LOGIC ---
-function collectPoint() {
-    score++;
-    scoreDisplay.innerText = score;
+function updateGame(points) {
+    if (isGameOver) return; // Stop the game if she already died
 
-    // RULE 1: Weather Check (Multiples of 3)
-    if (score % 3 === 0) {
-        document.body.classList.toggle('cold-mode');
-        document.getElementById('next-goal').innerText = score + 3;
-    }
+    score += points;
+    document.getElementById('score').innerText = score;
 
-    // RULE 2: Attractive Gold Check (Multiples of 4)
-    if (score % 4 === 0) {
-        player.innerHTML = "🤰👙"; // Bikini Evolution
-        player.classList.add('gold-active');
-        document.documentElement.style.setProperty('--road-speed', '0.6s');
+    // 1. LEVEL LOGIC (Every 3 points is a new level)
+    let currentLevel = Math.floor(score / 3) + 1;
+    let isCold = false;
+
+    // 2. CHECK FOR LEVEL 6 (The Cold Level)
+    if (currentLevel === 6) {
+        isCold = true;
+        document.getElementById('game-container').classList.add('cold-level');
     } else {
-        const isCold = document.body.classList.contains('cold-mode');
-        player.innerHTML = isCold ? "🤰🧥" : "🤰";
-        player.classList.remove('gold-active');
-        document.documentElement.style.setProperty('--road-speed', '2s');
+        document.getElementById('game-container').classList.remove('cold-level');
+    }
+
+    // 3. BIKINI LOGIC (Multiples of 4)
+    let hasBikini = (score % 4 === 0 && score > 0);
+
+    if (hasBikini) {
+        char.innerHTML = "🤰👙"; // Bikini
+        char.classList.add('attractive');
+    } else {
+        char.innerHTML = isCold ? "🤰🧥" : "🤰"; // Coat for cold, normal otherwise
+        char.classList.remove('attractive');
+    }
+
+    // 4. THE FATAL COMBINATION (Bikini + Cold)
+    if (isCold && hasBikini) {
+        triggerGameOver();
     }
 }
 
-// --- 3. GATE SPAWNER ---
-function spawnGate() {
-    const gate = document.createElement('div');
-    gate.className = 'gate';
-    gate.innerHTML = "👕"; 
+// 5. THE DEATH & BIRTH SEQUENCE
+function triggerGameOver() {
+    isGameOver = true;
     
-    const lanes = ["20%", "50%", "80%"];
-    gate.style.left = lanes[Math.floor(Math.random() * 3)];
-    gate.style.top = "0px";
-    
-    scene.appendChild(gate);
-    
-    // Move gate down towards player
-    let pos = 0;
-    const move = setInterval(() => {
-        pos += 10;
-        gate.style.top = pos + "px";
-        
-        // Collision Detection
-        if (pos > 400 && pos < 480) {
-            const playerLeft = currentLane;
-            const gateLeft = parseInt(gate.style.left);
-            
-            if (Math.abs(playerLeft - gateLeft) < 10) {
-                collectPoint();
-                gate.remove();
-                clearInterval(move);
-            }
-        }
-        
-        if (pos > 600) {
-            gate.remove();
-            clearInterval(move);
-        }
-    }, 50);
-}
+    // Change emoji to Skull + Baby
+    char.innerHTML = "💀👶"; 
+    char.classList.remove('attractive');
 
-// Start the game loop
-setInterval(spawnGate, 1500);
+    // Stop the 3D road animation (if you have it running)
+    const road = document.getElementById('road');
+    if (road) road.style.animationPlayState = 'paused';
+
+    // Optional: Add a slight delay before showing the Game Over message
+    setTimeout(() => {
+        alert("GAME OVER! You wore a bikini in the cold level. She died and gave birth!");
+    }, 500);
+}
