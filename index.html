@@ -2,19 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Games</title>
+    <title>3D Weather Run</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="ui">
-        <div class="stat">SCORE: <span id="score">0</span></div>
-        <div class="stat">NEXT WEATHER: <span id="next-goal">3</span></div>
-        <div id="progress-container"><div id="progress-bar"></div></div>
+
+    <div id="ui" style="position: absolute; top: 10px; left: 10px; z-index: 1000; color: white;">
+        <p>SCORE: <span id="score">0</span></p>
+        <p>NEXT WEATHER: <span id="next-goal">3</span></p>
     </div>
 
     <div id="scene">
-        <div id="snow-overlay"></div>
         <div id="road"></div>
         <div id="player">🤰</div>
     </div>
