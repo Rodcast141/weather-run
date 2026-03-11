@@ -58,4 +58,34 @@ function triggerGameOver() {
     setTimeout(() => {
         alert("GAME OVER! You wore a bikini in the cold level. She died and gave birth!");
     }, 500);
+}// 1. ADD THIS AT THE TOP WITH YOUR OTHER VARIABLES:
+let isGameOver = false;
+
+// 2. ADD THIS TO YOUR KEYBOARD/MOUSE MOVEMENT FUNCTIONS:
+// Look for where you handle movement and add this check at the very top of those functions:
+if (isGameOver) return; 
+
+// 3. ADD THIS FUNCTION AT THE VERY BOTTOM:
+function restartGame() {
+    score = 0;
+    isGameOver = false;
+    document.getElementById('score').innerText = score;
+    document.getElementById('game-over-screen').style.display = 'none';
+    
+    // Add your original "Reset Position" logic here (e.g., reset charPos to 50)
+    char.innerText = "🏃"; 
+}
+
+// 4. ADD THIS LOGIC INTO YOUR EXISTING UPDATE/SCORE FUNCTION:
+// Replace your existing check with this to connect the new mechanics:
+function checkLevelAndLife() {
+    let currentLevel = Math.floor(score / 3) + 1;
+    let isCold = (currentLevel === 6);
+    let hasBikini = (score % 4 === 0 && score > 0);
+
+    if (isCold && hasBikini) {
+        isGameOver = true;
+        char.innerText = "💀👶";
+        document.getElementById('game-over-screen').style.display = 'block';
+    }
 }
