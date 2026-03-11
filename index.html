@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>3D Weather Run</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div id="ui" style="position: absolute; top: 10px; left: 10px; z-index: 1000; color: white;">
-        <p>SCORE: <span id="score">0</span></p>
-        <p>NEXT WEATHER: <span id="next-goal">3</span></p>
+    <div id="game-container">
+        <div id="ui">Score: <span id="score">0</span></div>
+        <div id="character">🏃</div> <div id="game-over-screen" style="display: none;">
+            <h1>GAME OVER</h1>
+            <button onclick="restartGame()">TRY AGAIN</button>
+        </div>
     </div>
-
-    <div id="scene">
-        <div id="road"></div>
-        <div id="player">🤰</div>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
